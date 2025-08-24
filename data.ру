@@ -1,0 +1,4 @@
+class Credantial:
+    name = 'Victoria'
+    email = 'victoria_laridans_28_333@yandex.ru'
+    password = 'vika7898'

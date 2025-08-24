@@ -1,0 +1,132 @@
+import pytest
+from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
+import sys
+import os
+
+# Добавляем корневую папку проекта (Sprint_5) в sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# теперь можно импортировать модули из корня проекта
+from curl import *
+from locators import Locators
+from generation_ep import EmailPasswordGenerator
+from data import Credantial, login_site, main_site, register_site
+
+
+@pytest.mark.usefixtures("resister_new_account")
+class TestCheckNewRegister:
+    def test_registration(self):
+        driver, email, password = resister_new_account
+        driver.maximize_window()
+        
+        # Ищем поле "email" и заполняем его
+        driver.find_element(*Locators.field_email).send_keys(email)
+
+        # Ищем поле "пароль" и заполняем его
+        driver.find_element(*Locators.field_password).send_keys(password)
+
+        # Находим надпись "Войти" и нажимаем на её
+        driver.find_element(*Locators.button_entrance).click()
+
+        # Ждем перехода на главную страницу экрана
+        WebDriverWait(driver, 10).until(EC.url_to_be(main_site))
+
+        # Проверяем что мы авторизировались созданным аккаунтом перейдя на главную страницу
+        assert driver.current_url == main_site
+
+@pytest.mark.usefixtures("start_from_main_not_login")
+class TestCheckingCreationExistingAccount:
+    def test_existing_acount(self):
+        driver = start_from_main_not_login
+        driver.maximize_window()
+
+        driver.find_element(*Locators.inscription_login).click()
+
+        # Ищем поле "Имя" и заполняем его
+        driver.find_element(*Locators.field_name).send_keys(Credantial.name)
+
+        # Ищем поле "email" и заполняем его
+        driver.find_element(*Locators.field_email).send_keys(Credantial.email)
+
+        # Ищем поле "пароль" и заполняем его
+        driver.find_element(*Locators. field_password).send_keys(Credantial. password)
+
+        # Жмем на зарегистрироваться
+        driver.find_element(*Locators.button_login).click()
+
+        # Ждем ошибку регистрации
+        assert WebDriverWait(driver, 5).until(EC.visibility_of_element_located(Locators.inscription_error_aсс))
+
+
+@pytest.mark.usefixtures("start_from_main_not_login")
+class TestCheckRegisterNoName:
+    def test_registration_no_name(self):
+        driver = start_from_main_not_login
+        driver.maximize_window()
+
+        # Кликаем по надписи "Зарегистрироваться"
+        driver.find_element(*Locators.inscription_Login).click()
+
+        # Генерация "email" and "password"
+        generator = EmailPasswordGenerator()
+        email, password = generator.generate()
+
+        # Ищем поле "email" и заполняем его
+        driver.find_element(*Locators.field_email).send_keys(email)
+
+        # Ищем поле "пароль" и заполняем его
+        driver.find_element(*Locators.field_password).send_keys(password)
+
+        # Жмем на кнопку "зарегистрироваться"
+        driver.find_element(*Locators.button_login).click()
+
+        # Проверяем что мы на странице регистрации
+        assert driver.current_url == register_site
+
+@pytest.mark.usefixtures("start_from_main_not_login")
+class TestCheckingErrorPassword:
+    def test_error_password(self):
+        driver = start_from_main_not_login
+        driver.maximize_window()
+
+        driver.find_element(*Locators.inscription_login).click()
+
+        # Ищем поле "Имя" и заполняем его
+        driver.find_element(*Locators.field_name).send_keys(Credantial.name)
+
+        # Ищем поле "email" и заполняем его
+        driver.find_element(*Locators.field_email).send_keys(Credantial.email)
+
+        # Ищем поле "пароль" и заполняем его
+        driver.find_element(*Locators.field_password).send_keys(Credantial.password)
+
+        # Жмем на "зарегистрироваться"
+        driver.find_element(*Locators.button_login).click()
+
+        # Ждем ошибку регистрации
+        assert WebDriverWait(driver, 10).until(EC.visibility_of_eLement_lLocated(Locators.inscription_error_password))
+
+
+@pytest.mark.usefixtures("start_from_main_not_login")
+class TestCheckingErrorPassword:
+    def test_no_password(self):
+        driver = start_from_main_not_login
+        driver.maximize_window()
+        email = 'igo@yandex.ru'
+
+        driver.find_element(*Locators.inscription_login).click()
+
+        # Ищем поле "Имя" и заполняем его
+        driver.find_element(*Locators.field_name).send_keys(Credantial.name)
+
+        # Ищем поле "email" и заполняем его
+        driver.find_element(*Locators.field_email).send_keys(email)
+
+        # Жмем на "зарегистрироваться"
+        driver.find_element(*Locators.button_login).click()
+
+        # Проверка текущего URL, должны остаться на странице регистрации 
+        assert driver.current_url == register_site

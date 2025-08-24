@@ -1,0 +1,66 @@
+from selenium.webdriver.common.by import By
+
+class Locators:
+
+    # Kнonka "Bойти в аккаунт" на главной странице
+    entrance_on_the_main = (By.XPATH, "//button[text()='Bойти в аккаунт']")
+
+    # Ocновное лого
+    logo = (By.XPATH, '//header/nav/div')
+
+    # Haдпucь "Bыход"
+    button_exit = (By.XPATH, ".//button[contains(text(),'Bыход')]")
+
+    # Haдпucь "Профиль"
+    inscription_profile = (By.XPATH, './/a[@href="/account/profile"]')
+
+    # Haдпucь "Булки"
+    inscription_bread = (By.XPATH, ".//span[contains(text(),'Булки')]")
+
+    # Кнопка надпись "Личный кабинет"
+    button_personal_area = (By.XPATH, ".//p[contains(text(),'Личный кабинет')]")
+
+    # Haдпucь "Соусы"
+    inscription_sause = (By.XPATH, ".//span[contains(text(), 'Соусы')]")
+
+    # Haдпucь "Зарегистрироваться"
+    inscription_login = (By.CLASS_NAME, "“Auth_link__1f01j")
+
+    # Раздел "Начинки"
+    inscription_fillings = (By.XPATH, ".//span[contains(text(),'Начинки')]")
+    
+    # Активный раздле с начинками
+    active_section = (By.XPATH, '//div[contains(@class, "tab_tab_type_current")]')
+
+    # Haдпись "Такой пользователь уже существует"
+    inscription_error_account = (By.XPATH, ".//p[contains(text(),'Такой пользователь уже существует')]")
+
+    # Haдпucь "Некорректный пароль"
+    inscription_error_password = (By.XPATH, '//div[contains(@class, "input_status_error")]')
+
+    # Kнопка "Восстановить пароль"
+    button_restore_password = (By.XPATH, './/a[@href="/forgot-password"]')
+
+    # Kнопка_надпись "Войти"
+    inscription_button_entrance = (By.XPATH, './/a[@href="/login"]')
+
+    # Кнопка "Войти"
+    button_entrance = (By.XPATH, ".//button[contains(text(),'Войти')]")
+
+    # Кнопка "Оформить заказ"
+    button_arrange_order = (By.XPATH, ".//button[contains(text(),'Оформить заказ')]")
+
+    # Кнопка "Зарегистрироваться"
+    button_login = (By.XPATH, ".//button[contains(text() ,'Зарегистрироваться')]")
+
+    # Кнопка "Конструктор"
+    button_constaction = (By.XPATH, ".//a[@href='/']")
+
+    # Поле "Имя" I
+    field_name = (By.XPATH, "//div[label[contains(text() , 'Имя')]]//input")
+
+    # Поле “email”
+    field_email = (By.XPATH, "//div[label[contains(text(), 'Email')]]//input")
+
+    # Поле "password"
+    field_password = (By.XPATH, "//div[label[contains(text(), 'Пароль')]]//input")
