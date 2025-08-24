@@ -1,0 +1,137 @@
+import pytest
+from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
+import sys
+import os
+
+# Добавляем корневую папку проекта (Sprint_5) в sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# теперь можно импортировать модули из корня проекта
+from curl import *
+from locators import Locators
+from generation_ep import EmailPasswordGenerator
+from data import Credantial, login_site, main_site, register_site
+
+@pytest.fixture
+def driver():
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    yield driver
+    driver.quit()
+
+
+@pytest.fixture
+def start_from_login_page(driver):
+    login_page = login_site
+    driver.get(login_page)
+
+    # Ищем поля и проходим авторизацию
+    driver.find_element(*Locators.field_email).send_keys(Credantial.email)
+    driver.find_element(*Locators.field_password).send_keys(Credantial.password)
+    driver.find_element(*Locators.button_entrance).click()
+
+    return driver
+
+@pytest.fixture
+def start_from_recovery_page(driver):
+    login_page = login_site
+    driver.get(login_page)
+
+    # Кликаем по кнопке "Восстановить пароль"
+    driver.find_element(*Locators.button_restore_password).click()
+
+    # Ждем загрузку кнопка "Войти"
+    WebDriverWait(driver, 6).until(EC.visibility_of_element_located(Locators.inscription_button_entrance))
+
+    # Кликаем по маленькой кнопке "Войти"
+    driver.find_element(*Locators.inscription_button_entrance).click()
+
+    # Ищем поля и проходим авторизацию
+    driver.find_element(*Locators.field_email).send_keys(Credantial.email)
+    driver.find_element(*Locators.field_password).send_keys(Credantial.password)
+    driver.find_element(*Locators.button_entrance).click()
+
+
+    return driver
+
+@pytest.fixture
+def start_from_main_page(driver):
+    main_page = main_site
+    driver.get(main_page)
+
+    # Кликаем по кнопке "Личный кабинет"
+    driver.find_element(*Locators.button_personal_area).click()
+
+    # Кликаем по маленькой кнопке "Войти"
+    driver.find_element(*Locators.button_entrance).click()
+
+    # Ищем поля и проходим авторизацию
+    driver.find_element(*Locators.field_email).send_keys(Credantial.email)
+    driver.find_element(*Locators.field_password).send_keys(Credantial.password)
+    driver.find_element(*Locators.button_entrance).click()
+
+    return driver
+
+@pytest.fixture
+def start_from_register_page(driver):
+    register_page = register_site
+    driver.get(register_page)
+
+    # Находим надпись "Войти" и нажимаем на неё
+    driver.find_element(*Locators.inscription_button_entrance).click()
+
+    # Ищем поля и проходим авторизацию
+    driver.find_element(*Locators.field_email).send_keys(Credantial.email)
+    driver.find_element(*Locators.field_password).send_keys(Credantial.password)
+    driver.find_element(*Locators.button_entrance).click()
+
+    return driver
+
+@pytest.fixture
+def start_from_main_not_login(driver):
+    login_page = login_site
+    driver.get(login_page)
+
+    return driver
+
+@pytest.fixture
+def start_from_site_not_login(driver):
+    login_page = main_site
+    driver.get(login_page)
+
+    return driver 
+
+@pytest.fixture
+def resister_new_account(driver):
+    login_page = login_site
+    driver.get(login_page)
+
+    # Кликаем по надпись "Зарегистрироваться"
+    driver.find_element(*Locators.inscription_login) .click()
+
+    # Generation email or password
+    generator = EmailPasswordGenerator()
+    email, password = generator.generate()
+
+
+    # Ищем поле "Имя" и заполняем его
+    driver.find_element(*Locators.field_name).send_keys(Credantial.name)  
+
+    # Ищем поле "Email" и заполняем его
+    driver.find_element(*Locators.field_email).send_keys(email)
+
+    # Ищем поле "пароль" и заполняем его
+    driver.find_element(*Locators.field_password).send_keys(password)
+
+    # Жмем на кнопку "Зарегистрироваться"
+    driver.find_element(*Locators.button_login).click()
+
+    # Жмем на кнопку "Войти"
+    WebDriverWait(driver, 4).until(EC.visibility_of_element_located(Locators.button_entrance))
+
+    return driver, email, password
+
+driver.quit()
